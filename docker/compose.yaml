@@ -1,0 +1,34 @@
+services:
+  server:
+    image: ghcr.io/erikbjo/timberlight-server:latest
+    container_name: server
+    build:
+      context: https://github.com/erikbjo/timberlight-server.git
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ENV=production
+    restart: always
+    networks:
+      - app-network
+
+  website:
+    image: ghcr.io/erikbjo/timberlight-website:latest
+    container_name: website
+    build:
+      context: https://github.com/erikbjo/timberlight-website.git
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - server
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
